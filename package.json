@@ -1,0 +1,8 @@
+{
+    "name": "cwp-16",
+    "author": "Eugene Kurlovich",
+    "dependencies": {
+        "axios": "^0.17.1",
+        "bluebird": "^3.5.1"
+    }
+}
