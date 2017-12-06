@@ -9,6 +9,9 @@ start();
 
 async function start()
 {
+
+console.log("-------------------------");  
+
     let cityCountry = await bluebird.all(
         [
             axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Minsk`),
@@ -33,4 +36,18 @@ console.log("-------------------------");
         ]
     );
     console.log("Nice and Paris in : " + country.data.results[0].formatted_address.split(", ")[1]);
+
+console.log("-------------------------");    
+
+    let street = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Via Nicola Salvi`);
+    console.log("Info about street : " + street.data.results[0].formatted_address);
+
+    console.log("All components : ");
+    street.data.results[0].address_components.forEach((component) =>
+    {
+    console.log(`   -${component.long_name}`);
+    });
+
+    console.log("-------------------------"); 
+
 }
