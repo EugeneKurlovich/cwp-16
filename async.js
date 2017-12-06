@@ -5,8 +5,6 @@ axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Minsk`).the
 console.log(response.data.results[0].formatted_address);
 });
 
-
-
 start();
 
 async function start()
@@ -19,9 +17,20 @@ async function start()
         ]
     );
 
+    console.log("Information about Minsk, Madrid, Rome :");
+
     cityCountry.forEach((i)=>
     {
         console.log(i.data.results[0].formatted_address);
     });
 
+console.log("-------------------------");
+
+    let country = await bluebird.any(
+        [
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Paris`),
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Nice`)
+        ]
+    );
+    console.log("Nice and Paris in : " + country.data.results[0].formatted_address.split(", ")[1]);
 }
