@@ -3,50 +3,35 @@ const Promise = require('bluebird');
 const geolib = require('geolib');
 const co = require('co');
 
-start();
+Func();
 
-async function start()
-{
-    await co(function* () 
-    {
-        return yield Promise.all(
-        [
-            axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Brest`),
-            axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Minsk`)
-        ]);
-    }).then(function (value) {
-        console.log("Расстояние между Брестом и Минском : " + geolib.getDistance(value[0].data.results[0].geometry.location,
-                                                                                value[1].data.results[0].geometry.location));
-    });
-
-
+async function Func() {
     await co(function* () {
-        return yield Promise.mapSeries(
+        const value = yield Promise.all(
             [
-            `https://maps.googleapis.com/maps/api/geocode/json?address=Minsk`,
-            `https://maps.googleapis.com/maps/api/geocode/json?address=Copenhagen`,
-            `https://maps.googleapis.com/maps/api/geocode/json?address=Oslo`,
-            `https://maps.googleapis.com/maps/api/geocode/json?address=Brussel`
-        ], async function (item) {
-            return await axios.get(item);
-        });
-    }).then(function (value) {
+                axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Brest`),
+                axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Minsk`)
+            ])
+        console.log("Расстояние между Брестом и Минском : " + geolib.getDistance(value[0].data.results[0].geometry.location, value[1].data.results[0].geometry.location));
+
+        let val = yield Promise.all([
+            axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Minsk`),
+            axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Copenhagen`),
+            axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Oslo`),
+            axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Brussel`)
+        ])
         let cities = {};
-        value.map((city) => {
-            console.log(city.data.results[0].formatted_address + "                     " + city.data.results[0].geometry.location);
+        val.map((city) => {
+            console.log(city.data.results[0].formatted_address);
             cities[city.data.results[0].formatted_address] = city.data.results[0].geometry.location;
         });
-        console.log("Ближайший к Минску : " + geolib.findNearest(cities['Minsk, Belarus'], cities, 1));
-    });
 
 
-    await co(function* () {
-        return yield Promise.all([
+        let v = yield Promise.all([
             axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=Piazza del Сolosseo`)
-        ]);
-    }).then(function (value) {
-        console.log(value[0].data.results[0].formatted_address);
-        value[0].data.results[0].address_components.forEach((component) => {
+        ])
+        console.log(v[0].data.results[0].formatted_address);
+        v[0].data.results[0].address_components.forEach((component) => {
             console.log(`   -${component.long_name}`);
         });
     });
